@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Partida - Draftosaurus - Ctrl+Zaurio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+     <div class="paisaje-invernal"></div>
+     <div class="contenedor-nieve">
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+</div>
+    <header>
+        <h1>Draftosaurus</h1> 
+        <p>Modo Seguimiento por <strong>Ctrl+Zaurio</strong>. <a href="index.html" class="btn btn-small">Cambiar Modo</a></p>
+        <div class="header-controls">
+            <button id="theme-toggle-button" class="theme-toggle" title="Alternar modo Invierno/Verano" aria-label="Alternar modo Invierno/Verano">
+                <span class="theme-toggle-indicator"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div id="seccion-bienvenida">
+            <section id="presentacion-seguimiento">
+                <h2>Seguimiento de Partidas</h2>
+                <p><strong>¡Bienvenido al Modo Seguimiento!</strong></p>
+                <p>Este modo te permite llevar un registro detallado de tus partidas de Draftosaurus, colocar dinosaurios en los recintos de tu tablero y calcular automáticamente las puntuaciones finales.</p>
+                <p>Presiona el botón para comenzar a configurar tu partida:</p>
+            </section>
+    
+            <nav id="navegacion-seguimiento">
+                <ul>
+                    <li><a href="#" id="btn-iniciar-configuracion" class="btn btn-accion btn-large">Iniciar Configuración</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <section id="seccion-configuracion-partida" class="hidden">
+            <h2>Configuración de la Partida</h2>
+            
+            <div class="form-group">
+                <label for="numero-jugadores">1. Selecciona el número de jugadores:</label>
+                <select id="numero-jugadores" class="form-control">
+                    <option value="0" selected disabled>Elige una opción...</option>
+                    <option value="2">2 Jugadores</option>
+                    <option value="3">3 Jugadores</option>
+                    <option value="4">4 Jugadores</option>
+                    <option value="5">5 Jugadores</option>
+                </select>
+            </div>
+
+            <div id="nombres-jugadores-container" class="form-group">
+                <label>2. Introduce los nombres de los exploradores:</label>
+                <div id="campos-nombres"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                 <button id="btn-crear-partida" class="btn btn-glow btn-large" disabled>¡Crear Partida!</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Ctrl+Zaurio - Instituto Tecnológico de Informática</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

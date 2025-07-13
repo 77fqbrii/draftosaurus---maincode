@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero de Juego - Draftosaurus - Ctrl+Zaurio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+     <div class="paisaje-invernal"></div>
+     <div class="contenedor-nieve">
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+</div>
+    <header>
+        <h1>Tablero de Juego</h1>
+        <p>Modo Seguimiento. <a href="modo_seguimiento.html" class="btn btn-small">Volver a Configurar</a></p>
+        <div class="header-controls">
+            <button id="theme-toggle-button" class="theme-toggle" title="Alternar modo Invierno/Verano" aria-label="Alternar modo Invierno/Verano">
+                <span class="theme-toggle-indicator"></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="main-tablero">
+        <section id="info-partida">
+            <div class="info-item">
+                <span>Ronda:</span>
+                <strong id="ronda-actual">1</strong> / 2
+            </div>
+            <div class="info-item">
+                <span>Turno:</span>
+                <strong id="turno-actual">1</strong> / 6
+            </div>
+            <div class="info-item">
+                <span>Jugador Activo (Tira el dado):</span>
+                <strong id="jugador-activo-dados"></strong>
+            </div>
+        </section>
+
+        <section id="gestion-turno-dados">
+            <div class="control-grupo">
+                <h4>Restricción del Dado (Aplica a todos MENOS al Jugador Activo)</h4>
+                <div id="restricciones-dados-container">
+                <button class="btn-dado" data-restriccion="boscosa">Zona Boscosa</button>
+                <button class="btn-dado" data-restriccion="rocosa">Zona Rocosa</button>
+                <button class="btn-dado" data-restriccion="cafeteria">Zona Cafetería</button>
+                <button class="btn-dado" data-restriccion="banos">Zona Baños</button>
+                <button class="btn-dado" data-restriccion="vacio">Recinto Vacío</button>
+                <button class="btn-dado" data-restriccion="sin-t-rex">Sin T-Rex</button>
+                <button class="btn-dado active" data-restriccion="ninguna">Ninguna</button>
+</div>
+            </div>
+            <div class="control-grupo">
+    <h4>Acciones del Turno</h4>
+    <div class="acciones-turno-grid">
+        <button id="btn-lanzar-dado" class="btn btn-pop">Lanzar Dado</button>
+        <button id="btn-siguiente-turno" class="btn btn-accion">Siguiente Turno</button>
+        <button id="btn-ver-historial" class="btn btn-info">Ver Historial</button>
+        <button id="btn-reiniciar-partida" class="btn btn-peligro">REINICIAR PARTIDA</button>
+    </div>
+</div>
+        </section>
+
+        <section id="panel-de-control">
+            <div id="mano-virtual-container" class="control-grupo">
+                <h4>Tu Mano de Dinosaurios (Ronda <span id="ronda-mano-virtual">1</span>)</h4>
+                <div id="mano-virtual-dinos">
+                </div>
+                <p id="mano-virtual-info" class="hidden">
+                    Haz clic en un dinosaurio de tu mano para seleccionarlo y ver dónde puedes colocarlo.
+                </p>
+                <div class="mano-botones-container">
+    <button id="btn-registrar-mano" class="btn btn-pop">Registrar Mano Inicial</button>
+    <button id="btn-mano-aleatoria" class="btn btn-pop">Generar Mano Aleatoria</button>
+</div>
+            </div>
+
+            <div id="acciones-jugador">
+                <button id="btn-deshacer" class="btn btn-small">Deshacer Último</button>
+            </div>
+        </section>
+        
+        <div id="tabs-jugadores"></div>
+        <div id="tableros-container"></div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <button id="btn-finalizar-partida" class="btn btn-glow btn-large">Finalizar Partida y Ver Resultados</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Ctrl+Zaurio - Instituto Tecnológico de Informática</p>
+    </footer>
+
+    <div id="notificacion-container"></div>
+
+    <template id="plantilla-parque-jugador">
+        <div class="parque-container">
+            <section class="tablero-juego">
+                <div class="encabezado-parque">
+                    <h2>Parque de <span class="nombre-jugador-parque"></span></h2>
+                    <div class="puntuacion-total-jugador">
+                        Puntuación: <span class="puntos">0</span>
+                    </div>
+                </div>
+                <div class="parque-jugador">
+                    <div class="recinto" data-recinto="bosqueSemejanza" data-zona="boscosa">
+                        <h3>Bosque Semejanza <span class="recinto-icono">☕</span></h3>
+                        <div class="dino-slots-container">
+                            <div class="dino-slot" data-slot-id="bosqueSemejanza-0"></div><div class="dino-slot" data-slot-id="bosqueSemejanza-1"></div><div class="dino-slot" data-slot-id="bosqueSemejanza-2"></div><div class="dino-slot" data-slot-id="bosqueSemejanza-3"></div><div class="dino-slot" data-slot-id="bosqueSemejanza-4"></div><div class="dino-slot" data-slot-id="bosqueSemejanza-5"></div>
+                        </div>
+                        <div class="recinto-puntuacion">
+                            <span class="punto">2</span>
+                            <span class="punto">4</span>
+                            <span class="punto">8</span>
+                            <span class="punto">12</span>
+                            <span class="punto">18</span>
+                            <span class="punto">24</span>
+                        </div>
+                    </div>
+                    <div class="recinto" data-recinto="reySelva" data-zona="boscosa">
+                        <h3>Rey de la Selva <span class="recinto-icono">🚻</span></h3>
+                        <div class="dino-slots-container">
+                            <div class="dino-slot" data-slot-id="reySelva-0"></div>
+                        </div>
+                    </div>
+
+                    <div class="recinto" data-recinto="trioFrondoso" data-zona="boscosa">
+                        <h3>Trío Frondoso <span class="recinto-icono">☕</span></h3>
+                        <div class="dino-slots-container">
+                            <div class="dino-slot" data-slot-id="trioFrondoso-0"></div><div class="dino-slot" data-slot-id="trioFrondoso-1"></div><div class="dino-slot" data-slot-id="trioFrondoso-2"></div>
+                        </div>
+                    </div>
+                    <div class="recinto" data-recinto="pradoDiferencia" data-zona="rocosa">
+                        <h3>Prado Diferencia <span class="recinto-icono">🚻</span></h3>
+                        <div class="dino-slots-container">
+                            <div class="dino-slot" data-slot-id="pradoDiferencia-0"></div><div class="dino-slot" data-slot-id="pradoDiferencia-1"></div><div class="dino-slot" data-slot-id="pradoDiferencia-2"></div><div class="dino-slot" data-slot-id="pradoDiferencia-3"></div><div class="dino-slot" data-slot-id="pradoDiferencia-4"></div><div class="dino-slot" data-slot-id="pradoDiferencia-5"></div>
+                        </div>
+                        <div class="recinto-puntuacion">
+                            <span class="punto">1</span>
+                            <span class="punto">3</span>
+                            <span class="punto">6</span>
+                            <span class="punto">10</span>
+                            <span class="punto">15</span>
+                            <span class="punto">21</span>
+                        </div>
+                    </div>
+
+                    <div class="recinto" data-recinto="praderaAmor" data-zona="rocosa">
+                        <h3>Pradera Amor <span class="recinto-icono">☕</span></h3>
+                        <div class="dino-slots-container">
+                            <div class="dino-slot" data-slot-id="praderaAmor-0"></div><div class="dino-slot" data-slot-id="praderaAmor-1"></div><div class="dino-slot" data-slot-id="praderaAmor-2"></div><div class="dino-slot" data-slot-id="praderaAmor-3"></div><div class="dino-slot" data-slot-id="praderaAmor-4"></div><div class="dino-slot" data-slot-id="praderaAmor-5"></div>
+                        </div>
+                    </div>
+                    <div class="recinto" data-recinto="islaSolitaria" data-zona="rocosa">
+                        <h3>Isla Solitaria <span class="recinto-icono">🚻</span></h3>
+                        <div class="dino-slots-container">
+                            <div class="dino-slot" data-slot-id="islaSolitaria-0"></div>
+                        </div>
+                    </div>
+
+                    <div class="recinto" data-recinto="rio" data-zona="neutra">
+                        <h3>Río</h3>
+                        <div class="dino-slots-container">
+                           <div class="dino-slot" data-slot-id="rio-0"></div><div class="dino-slot" data-slot-id="rio-1"></div><div class="dino-slot" data-slot-id="rio-2"></div><div class="dino-slot" data-slot-id="rio-3"></div><div class="dino-slot" data-slot-id="rio-4"></div><div class="dino-slot" data-slot-id="rio-5"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </template>
+    <script src="js/script.js"></script>
+    <div id="resultados-modal-overlay" class="modal-overlay">
+        <div class="modal-content card-parchment">
+            <button id="btn-close-resultados-modal" class="modal-close-btn" aria-label="Cerrar ventana modal">&times;</button>
+            <h2 class="font-display">Resultados Finales</h2>
+            <div id="resultados-finales-container" class="modal-scrollable-content"></div>
+            <div id="ganador-container" class="ganador"></div>
+        </div>
+    </div>
+    <div id="historial-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-titulo">Historial de Movimientos</h2>
+            <div id="historial-body" class="modal-body">
+                </div>
+           <button id="btn-cerrar-historial-modal" class="btn btn-info">Cerrar</button>
+        </div>
+    </div>
+    </body>
+</html>
+
+</body>
+</html>

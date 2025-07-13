@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenid@ a Draftosaurus - Ctrl+Zaurio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+     <div class="paisaje-invernal"></div>
+     <div class="contenedor-nieve">
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+     <div class="copo-de-nieve"></div>
+</div>
+    <header>
+        <h1>Draftosaurus</h1>
+        <p class="subtitulo-app">S.I.G.P.D - Asistente para Draftosaurus</p>
+        <p>Una aplicación de <strong> Ctrl+Zaurio</strong></p>
+        <div class="header-controls">
+            <button id="btn-quienes-somos" class="btn-header-control" title="Sobre Ctrl+Zaurio">¿Quiénes Somos?</button>
+            <button id="theme-toggle-button" class="theme-toggle" title="Alternar modo Invierno/Verano" aria-label="Alternar modo Invierno/Verano">
+                <span class="theme-toggle-indicator"></span>
+            </button>
+        </div>
+    </header>
+    <main>            
+         <section id="seleccion-modo">
+            <h2>Elige Modo De Juego</h2>
+            <div class="modo-botones">
+                <a href="modo_seguimiento.html" class="btn btn-glow btn-large">Modo de Seguimiento</a>
+                <a href="#" class="btn btn-pop btn-large btn-disabled" aria-disabled="true" onclick="alert('El Modo Juego Digital estará disponible próximamente. ¡Gracias por tu interés!'); return false;">Modo Juego Digital</a>
+            </div>
+
+            <div class="descripcion-container">
+                <button id="btn-ver-descripcion" class="btn btn-small btn-accion" aria-expanded="false">
+                    ¿Qué hace cada modo?
+                    <span class="arrow-indicator"></span>
+                </button>
+                <div id="descripcion-modos-texto" class="descripcion-modos-contenido" aria-hidden="true">
+                    <h4>Modo de Seguimiento:</h4>
+                    <p>Te ayuda a llevar la cuenta de tu partida física de Draftosaurus. Registra los dinosaurios que colocas en tu tablero y calcula los puntos automáticamente al final del juego. ¡Ideal para facilitar la puntuación y validar reglas!</p>
+                    
+                    <h4>Modo Juego Digital:</h4>
+                    <p>Te permitirá jugar una partida completa de Draftosaurus directamente en tu dispositivo, siguiendo todas las reglas del juego base.</p>
+                </div>
+            </div>
+            </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Ctrl+Zaurio - Instituto Tecnológico de Informática</p>
+    </footer>
+
+   <div id="quienes-somos-modal-overlay" class="modal-overlay">
+        <div class="modal-content card-parchment">
+            <button id="btn-close-quienes-somos-modal" class="modal-close-btn" aria-label="Cerrar ventana modal">&times;</button>
+            <h2 class="font-display">Sobre Ctrl+Zaurio</h2>
+            
+            <div class="logo-container">
+                <img src="imagenes/ctrlzaurio.png" alt="Logo de Ctrl+Zaurio" class="quienes-somos-logo">
+            </div>
+            <div class="modal-scrollable-content">
+    <p class="modal-slogan">¡Excavando el futuro de la informática, un byte a la vez!</p>
+
+    <p>Somos <strong>Ctrl+Zaurio</strong>, una empresa de desarrollo de software formada por estudiantes del Instituto Tecnológico de Informática (ITI CETP), con una pasión por crear soluciones innovadoras y experiencias de usuario memorables.</p>
+    <p>Nuestra misión es aplicar los conocimientos adquiridos de nuestra formación en el ITI para desarrollar proyectos creativos y funcionales mediante el trabajo en equipo, el aprendizaje continuo y en enfrentar cada desafío que se nos proponga, tal como nos enseño el Instituto.</p>
+    <p>Este proyecto sobre "Draftosaurus", es un reflejo de nuestro compromiso en la informática y el entretenimiento, facilitando la diversión y la estrategia para jugadores como tú.</p>
+    <p class="modal-thanks"><em>Gracias por explorar nuestro trabajo. ¡Esperamos que disfrutes la aplicación!</em></p>
+</div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -2024,7 +2024,7 @@ body:not(.dark-mode) .contenedor-nevada {
 .copo-nieve {
     position: absolute;
     background-image: url('../imagenes/copodenieve.png'); 
-    background-size: contain;
+    background-size: contain; 
     background-repeat: no-repeat; 
     background-position: center; 
     opacity: 0.8;

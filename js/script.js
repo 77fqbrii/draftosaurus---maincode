@@ -844,4 +844,95 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         inicializarJuego();
     }
+    
+    const contenedorArbolesInvierno = document.querySelector('.contenedor-arboles-invierno');
+    const contenedorNevada = document.querySelector('.contenedor-nevada');
+    const esModoInvierno = !document.body.classList.contains('dark-mode');
+    function crearCopoNieve() {
+        if (!contenedorNevada || !esModoInvierno) return; 
+
+        const copoNieve = document.createElement('div');
+        copoNieve.classList.add('copo-nieve');
+        const tamano = Math.random() * 5 + 5; 
+        const duracion = Math.random() * 8 + 7; 
+        const retraso = Math.random() * 10; 
+        const inicioX = Math.random() * 100; 
+        const finXAleatorio = Math.random() * 40 - 20; 
+        copoNieve.style.width = `${tamano}px`;
+        copoNieve.style.height = `${tamano}px`;
+        copoNieve.style.left = `${inicioX}vw`;
+        copoNieve.style.animationDuration = `${duracion}s`;
+        copoNieve.style.animationDelay = `${retraso}s`;
+        copoNieve.style.setProperty('--mov-x-aleatorio', finXAleatorio); 
+        contenedorNevada.appendChild(copoNieve);
+        copoNieve.addEventListener('animationiteration', () => {
+            if (Math.random() > 0.9) { 
+                copoNieve.remove();
+            } else {
+                copoNieve.style.left = `${Math.random() * 100}vw`;
+                copoNieve.style.animationDuration = `${Math.random() * 8 + 7}s`;
+                copoNieve.style.animationDelay = `${Math.random() * 10}s`;
+                copoNieve.style.setProperty('--mov-x-aleatorio', Math.random() * 40 - 20);
+                copoNieve.style.opacity = '0.8'; 
+                copoNieve.style.transform = 'translateY(-10vh) translateX(0)'; 
+            }
+        });
+    }
+
+    function generarNevada(cantidad) {
+        if (!esModoInvierno || !contenedorNevada) return;
+        contenedorNevada.innerHTML = '';
+        for (let i = 0; i < cantidad; i++) {
+            crearCopoNieve();
+        }
+    }
+    function inicializarArbolesInvierno() {
+        const arboles = document.querySelectorAll('.arbol-invierno');
+
+        if ('IntersectionObserver' in window) {
+            const observadorArboles = new IntersectionObserver((entradas, observador) => {
+                entradas.forEach(entrada => {
+                    if (entrada.isIntersecting) {
+                        const arbol = entrada.target;
+                        arbol.style.transition = 'opacity 1s ease-out';
+                        arbol.style.opacity = '0.7'; 
+                        observador.unobserve(arbol); 
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px -10% 0px' 
+            });
+
+            arboles.forEach(arbol => {
+                observadorArboles.observe(arbol);
+            });
+        } else {
+            arboles.forEach(arbol => {
+                arbol.style.opacity = '0.7';
+            });
+        }
+    }
+
+    if (esModoInvierno) {
+        generarNevada(50); 
+        inicializarArbolesInvierno();
+    }
+    const botonAlternarTema = document.getElementById('theme-toggle-button');
+    if (botonAlternarTema) {
+        botonAlternarTema.addEventListener('click', () => {
+            setTimeout(() => {
+                const modoInviernoActual = !document.body.classList.contains('dark-mode');
+                if (modoInviernoActual) {
+                    generarNevada(50);
+                    inicializarArbolesInvierno(); 
+                    contenedorArbolesInvierno.style.opacity = '1'; 
+                    contenedorArbolesInvierno.style.visibility = 'visible';
+                } else {
+                    contenedorNevada.innerHTML = ''; 
+                    contenedorArbolesInvierno.style.opacity = '0'; 
+                    contenedorArbolesInvierno.style.visibility = 'hidden';
+                }
+            }, 100); 
+        });
+    }
 });

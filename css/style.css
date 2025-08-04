@@ -569,7 +569,7 @@ header p strong {
 .btn-info {
     background-color: var(--dh-color-info);
     color: #FFFFFF;
-    border: 2px solid var(--dh-color-info);
+    border: none;
     font-weight: 700;
 }
 
@@ -1245,7 +1245,7 @@ body.dark-mode .btn-dado.active {
 .btn-peligro {
     background-color: var(--dh-color-peligro);
     color: #FFFFFF;
-    border: 2px solid var(--dh-color-peligro);
+    border: none;
     font-weight: 700;
 }
 
@@ -2125,3 +2125,35 @@ body:not(.dark-mode) {
         bottom: -8%;
     }
 }
+
+.recinto-estado {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 8px;
+    background-color: transparent;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    transform: scale(0);
+}
+.recinto-estado.estado-valido {
+    background-color: #27ae60; 
+    transform: scale(1);
+    box-shadow: 0 0 8px #27ae60;
+}
+.recinto-estado.estado-invalido {
+    background-color: #c0392b; 
+    transform: scale(1);
+    box-shadow: 0 0 8px #c0392b;
+}
+
+.recinto-restringido {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.35s ease-in-out;
+}
+.recinto-restringido .recinto-puntuacion,
+.recinto-restringido h3 {
+    opacity: 0.7;
+}
+

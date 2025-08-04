@@ -321,29 +321,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return slotsValidos;
         }
 
-        function actualizarVisualizacionSlots() {
-            limpiarVisualizacionSlots();
-            if (!dinosaurioSeleccionado) return;
+        function actualizarVisualizacionSlots(tipoDino) {
+            limpiarVisualizacionSlots(); 
+            if (!tipoDino) return;
 
             const indiceJugador = indiceJugadorActivoTablero;
-            if (estadoJuego.jugadoresQueJugaronEsteTurno.includes(indiceJugador)) return;
-
-            const slotsValidos = obtenerSlotsValidos(indiceJugador, dinosaurioSeleccionado);
-            if(contenedorTableros) contenedorTableros.classList.add('tablero-restringido');
-
-            if (slotsValidos.length === 0) {
-                mostrarNotificacion("¡Atención! No hay jugadas válidas disponibles en este momento.", "error");
-            } else {
+            if (estadoJuego.jugadoresQueJugaronEsteTurno.includes(indiceJugador)) {
+                return; 
+            }
+            const slotsValidos = obtenerSlotsValidos(indiceJugador, tipoDino);
+            contenedorTableros.classList.add('tablero-restringido');
+            if (slotsValidos.length > 0) {
                 slotsValidos.forEach(slot => slot.classList.add('slot-valido'));
             }
         }
 
         function intentarColocarDinosaurio(slot) {
             if (!dinosaurioSeleccionado || !slot.classList.contains('slot-valido')) return;
-            
             const manoJugador = estadoJuego.manos[indiceJugadorActivoTablero] || [];
             const indiceDinoEnMano = manoJugador.indexOf(dinosaurioSeleccionado);
-            
             if (indiceDinoEnMano === -1) {
                 mostrarNotificacion("Este dinosaurio no está en tu mano actual.", "error");
                 return;
@@ -374,9 +370,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             dinosaurioSeleccionado = null;
             limpiarVisualizacionSlots();
-            calcularPuntuacionTotal(indiceJugador, false);
+            estadoJuego.jugadores.forEach((_, idx) => calcularPuntuacionTotal(idx));
             actualizarEstadoBotonSiguienteTurno();
             actualizarEstilosPestanas(); 
+            actualizarVisualizacionRestricciones();
         }
 
         function deshacerUltimoMovimiento() {
@@ -403,10 +400,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
             limpiarVisualizacionSlots();
             renderizarManoVirtual(indiceJugador);
-            calcularPuntuacionTotal(indiceJugador, false);
+            estadoJuego.jugadores.forEach((_, idx) => calcularPuntuacionTotal(idx));
+            actualizarEstadoIslaSolitaria(indiceJugador);
             actualizarEstadoBotonSiguienteTurno();
             actualizarEstilosPestanas(); 
             mostrarNotificacion("Último movimiento deshecho.", 'success');
+            actualizarEstadoIslaSolitaria(movimientoParaDeshacer.indiceJugador);
+            actualizarVisualizacionRestricciones();
+        }
+
+        function actualizarVisualizacionRestricciones() {
+            const indiceJugador = indiceJugadorActivoTablero;
+            const contenedorParque = document.querySelector(`.parque-container[data-jugador-index="${indiceJugador}"]`);
+            if (!contenedorParque) return;
+
+            const todosLosRecintos = contenedorParque.querySelectorAll('.recinto');
+            todosLosRecintos.forEach(r => r.classList.remove('recinto-restringido'));
+
+            const restriccion = estadoJuego.restriccionDados;
+            const esJugadorAfectado = indiceJugador !== estadoJuego.indiceJugadorActivoDados;
+
+            if (!esJugadorAfectado || restriccion === 'ninguna' || restriccion === null) {
+                return; 
+            }
+            const zonas = {
+                cafeteria: ['praderaAmor', 'trioFrondoso', 'bosqueSemejanza'],
+                banos: ['reySelva', 'islaSolitaria', 'pradoDiferencia'],
+                boscosa: ['bosqueSemejanza', 'reySelva', 'trioFrondoso'],
+                rocosa: ['pradoDiferencia', 'islaSolitaria', 'praderaAmor']
+            };
+            todosLosRecintos.forEach(recintoEl => {
+                const claveRecinto = recintoEl.dataset.recinto;
+                let restringido = false;
+
+                switch (restriccion) {
+                    case 'cafeteria':
+                        if (!zonas.cafeteria.includes(claveRecinto)) restringido = true;
+                        break;
+                    case 'banos':
+                        if (!zonas.banos.includes(claveRecinto)) restringido = true;
+                        break;
+                    case 'boscosa':
+                        if (!zonas.boscosa.includes(claveRecinto)) restringido = true;
+                        break;
+                    case 'rocosa':
+                        if (!zonas.rocosa.includes(claveRecinto)) restringido = true;
+                        break;
+                    case 'vacio':
+                        if (estadoJuego.jugadores[indiceJugador].tablero[claveRecinto].length > 0) restringido = true;
+                        break;
+                    case 'sin-t-rex':
+                        if (estadoJuego.jugadores[indiceJugador].tablero[claveRecinto].some(d => d.type === 't-rex')) restringido = true;
+                        break;
+                }
+                if (restringido) {
+                    recintoEl.classList.add('recinto-restringido');
+                }
+            });
         }
 
         function lanzarDado() {
@@ -421,6 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mostrarNotificacion(`¡El dado ha caído en: ${nombreNotificacion[resultado].toUpperCase()}!`, 'success');
             actualizarUIInfoPartida();
             actualizarVisualizacionSlots();
+            actualizarVisualizacionRestricciones();
         }
 
         function avanzarTurno() {
@@ -461,6 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
             actualizarUIInfoPartida();
             actualizarEstadoBotonSiguienteTurno();
             limpiarVisualizacionSlots();
+            actualizarVisualizacionRestricciones();
             renderizarManoVirtual(indiceJugadorActivoTablero);
             actualizarEstilosPestanas(); 
             mostrarNotificacion(`Inicia el Turno ${estadoJuego.turnoActual} de la Ronda ${estadoJuego.rondaActual}.`, 'info');
@@ -525,10 +577,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return bono;
         };
-
-        function calcularPuntuacionTotal(indiceJugador, esFinal) {
+        
+        function actualizarEstadoIslaSolitaria(indiceJugador) {
             const jugador = estadoJuego.jugadores[indiceJugador];
-            if(!jugador) return;
+            const parqueCompleto = Object.values(jugador.tablero).flat();
+            const dinoEnIsla = jugador.tablero.islaSolitaria[0];
+            const contenedorParque = document.querySelector(`.parque-container[data-jugador-index="${indiceJugador}"]`);
+            if (!contenedorParque) return;
+            const indicador = contenedorParque.querySelector('.recinto[data-recinto="islaSolitaria"] .recinto-estado');
+            if (!indicador) return;
+            indicador.classList.remove('estado-valido', 'estado-invalido');
+            if (!dinoEnIsla) {
+                return; 
+            }
+            const conteoTotalEspecie = parqueCompleto.filter(d => d.type === dinoEnIsla.type).length;
+
+            if (conteoTotalEspecie === 1) {
+                indicador.classList.add('estado-valido');
+            } else {
+                indicador.classList.add('estado-invalido');
+            }
+        }
+
+        function calcularPuntuacionTotal(indiceJugador) { 
+            const jugador = estadoJuego.jugadores[indiceJugador];
+            if (!jugador) return;
             const tablero = jugador.tablero;
             let total = 0;
             let puntajes = {};
@@ -540,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
             puntajes.rio = tablero.rio.length;
             puntajes.islaSolitaria = calcularIslaSolitaria(tablero.islaSolitaria, parqueCompleto);
             puntajes.bonusTRex = calcularBonusTRex(tablero);
-            puntajes.reySelva = esFinal ? calcularReySelva(indiceJugador, estadoJuego.jugadores) : 0;
+            puntajes.reySelva = calcularReySelva(indiceJugador, estadoJuego.jugadores);
             total = Object.values(puntajes).reduce((sum, val) => sum + val, 0);
             jugador.puntuacionDetallada = puntajes;
             jugador.puntuacionTotal = total;
@@ -593,22 +666,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function renderizarManoVirtual(indiceJugador) {
-            if(!dinosManoVirtual) return;
+            if (!dinosManoVirtual) return;
             dinosManoVirtual.innerHTML = '';
             const mano = estadoJuego.manos[indiceJugador] || [];
             const infoMano = document.getElementById('mano-virtual-info');
-
             if (mano.length > 0) {
+                const fragment = document.createDocumentFragment();
                 mano.forEach(tipoDino => {
                     const elementoDino = document.createElement('div');
                     elementoDino.className = 'dino-selector';
                     elementoDino.dataset.dinoType = tipoDino;
                     elementoDino.title = tipoDino.charAt(0).toUpperCase() + tipoDino.slice(1);
-                    dinosManoVirtual.appendChild(elementoDino);
+                    elementoDino.draggable = true;
+                    elementoDino.addEventListener('dragstart', (e) => {
+                        if (elementoDino.classList.contains('colocado')) {
+                            e.preventDefault();
+                            return;
+                        }
+                        e.dataTransfer.setData('text/plain', tipoDino);
+                        e.dataTransfer.effectAllowed = 'move';    
+                        actualizarVisualizacionSlots(tipoDino);  
+                        setTimeout(() => elementoDino.style.opacity = '0.5', 0);
+                    });
+                    elementoDino.addEventListener('dragend', () => {    
+                        limpiarVisualizacionSlots();
+                        elementoDino.style.opacity = '1';
+                    });
+                    fragment.appendChild(elementoDino);
                 });
-                if(infoMano) infoMano.classList.remove('hidden');
+                dinosManoVirtual.appendChild(fragment);
+                if (infoMano) infoMano.classList.remove('hidden');
             } else {
-                if(infoMano) infoMano.classList.add('hidden');
+                if (infoMano) infoMano.classList.add('hidden');
             }
         }
 
@@ -713,6 +802,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dinosaurioSeleccionado = null;
             renderizarManoVirtual(indiceJugadorActivoTablero);
             limpiarVisualizacionSlots();
+            actualizarVisualizacionRestricciones();
         }
 
         function mostrarResultadosFinales() {
@@ -768,22 +858,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function anadirEventListeners() {
-            if(dinosManoVirtual) {
-                dinosManoVirtual.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('dino-selector')) {
-                        if (e.target.classList.contains('colocado')) return;
-                        
-                        document.querySelector('#mano-virtual-dinos .dino-selector.selected')?.classList.remove('selected');
-                        
-                        if(dinosaurioSeleccionado === e.target.dataset.dinoType){
-                            dinosaurioSeleccionado = null;
-                            limpiarVisualizacionSlots();
-                        } else {
-                            e.target.classList.add('selected');
-                            dinosaurioSeleccionado = e.target.dataset.dinoType;
-                            actualizarVisualizacionSlots();
-                        }
+            if (contenedorTableros) {
+                contenedorTableros.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (e.target.classList.contains('slot-valido')) {
+                        e.dataTransfer.dropEffect = 'move';
+                    } else {
+                        e.dataTransfer.dropEffect = 'none';
                     }
+                });
+                contenedorTableros.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (e.target.classList.contains('slot-valido')) {
+                        const tipoDino = e.dataTransfer.getData('text/plain');
+                        dinosaurioSeleccionado = tipoDino;
+                        intentarColocarDinosaurio(e.target);
+                    }
+                    limpiarVisualizacionSlots(); 
                 });
             }
             if(btnVerHistorial) btnVerHistorial.addEventListener('click', mostrarHistorial);
@@ -791,18 +882,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if(modalHistorialOverlay) modalHistorialOverlay.addEventListener('click', (e) => {
                 if (e.target === modalHistorialOverlay) modalHistorialOverlay.classList.remove('visible');
             });
-
-            if(contenedorTableros) contenedorTableros.addEventListener('click', (e) => {
-                if (e.target.classList.contains('dino-slot')) {
-                    intentarColocarDinosaurio(e.target);
-                }
-            });
+            
             if(contenedorPestanas) contenedorPestanas.addEventListener('click', (e) => {
                 if (e.target.classList.contains('tab-jugador')) {
                     cambiarPestanaActiva(e.target.dataset.jugadorIndex);
                 }
             });
-
             if(btnRegistrarMano) btnRegistrarMano.addEventListener('click', abrirModalRegistroMano);
             if(btnSiguienteTurno) btnSiguienteTurno.addEventListener('click', avanzarTurno);
             if(btnLanzarDado) btnLanzarDado.addEventListener('click', lanzarDado);
@@ -812,7 +897,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (e.target.classList.contains('btn-dado')) {
                     estadoJuego.restriccionDados = e.target.dataset.restriccion;
                     actualizarUIInfoPartida();
-                    actualizarVisualizacionSlots();
+                    actualizarVisualizacionSlots(null); 
+                    actualizarVisualizacionRestricciones();
                 }
             });
             if(btnFinalizarPartida) btnFinalizarPartida.addEventListener('click', mostrarResultadosFinales);
@@ -841,6 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
             actualizarEstadoBotonSiguienteTurno();
             renderizarManoVirtual(indiceJugadorActivoTablero);
             actualizarEstilosPestanas();
+            actualizarVisualizacionSlots();
         }
         inicializarJuego();
     }
